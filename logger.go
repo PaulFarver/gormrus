@@ -11,7 +11,7 @@ import (
 )
 
 type Logger struct {
-	entry interface {
+	Entry interface {
 		logrus.FieldLogger
 		WithContext(context.Context) *logrus.Entry
 	}
@@ -24,20 +24,20 @@ func (l *Logger) LogMode(gormlogger.LogLevel) gormlogger.Interface {
 }
 
 func (l *Logger) Info(ctx context.Context, str string, v ...interface{}) {
-	l.entry.WithContext(ctx).Infof(str, v...)
+	l.Entry.WithContext(ctx).Infof(str, v...)
 }
 
 func (l *Logger) Warn(ctx context.Context, str string, v ...interface{}) {
-	l.entry.WithContext(ctx).Warnf(str, v...)
+	l.Entry.WithContext(ctx).Warnf(str, v...)
 }
 
 func (l *Logger) Error(ctx context.Context, str string, v ...interface{}) {
-	l.entry.WithContext(ctx).Errorf(str, v...)
+	l.Entry.WithContext(ctx).Errorf(str, v...)
 }
 
 func (l *Logger) Trace(ctx context.Context, begin time.Time, fc func() (sql string, rowsAffected int64), err error) {
 	elapsed := time.Since(begin)
-	entry := l.entry.WithContext(ctx).WithField("elapsed", elapsed)
+	entry := l.Entry.WithContext(ctx).WithField("elapsed", elapsed)
 	switch {
 	case err != nil && (!errors.Is(err, gorm.ErrRecordNotFound) || !l.IgnoreRecordNotFoundError):
 		sql, rows := fc()
